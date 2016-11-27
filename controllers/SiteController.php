@@ -9,6 +9,8 @@ use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
 use app\models\Post;
+use app\models\UploadForm;
+use yii\web\UploadedFile;
 
 class SiteController extends Controller
 {
@@ -132,4 +134,32 @@ class SiteController extends Controller
         ]);
         //return $this->render('about');
     }
+    
+    public function actionAdmin_panel()
+    {
+        if (!Yii::$app->user->isGuest) {
+        return $this->render('admin_panel');
+        }
+        else return $this->goBack((!empty(Yii::$app->request->referrer) ? Yii::$app->request->referrer : null));
+    }
+    
+    public function actionImage_upload()
+    {
+        if (!Yii::$app->user->isGuest) {
+        $model = new UploadForm();
+
+        if (Yii::$app->request->isPost) {
+            $model->imageFiles = UploadedFile::getInstances($model, 'imageFiles');
+            if ($model->upload()) {
+                // file is uploaded successfully
+                return;
+            }
+        }
+
+        return $this->render('image_upload', ['model' => $model]);
+        }
+        else return $this->goBack((!empty(Yii::$app->request->referrer) ? Yii::$app->request->referrer : null));
+    }
+    
+    
 }

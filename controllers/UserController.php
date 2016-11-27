@@ -35,7 +35,7 @@ class UserController extends Controller
      */
     public function actionIndex()
     {
-        if (!Yii::$app->user->isGuest && Yii::$app->user->getId() == 100) {
+        if (!Yii::$app->user->isGuest && Yii::$app->user->identity->username == 'admin') {
         $dataProvider = new ActiveDataProvider([
             'query' => UserM::find(),
         ]);

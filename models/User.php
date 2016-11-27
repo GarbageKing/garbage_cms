@@ -8,10 +8,11 @@ class User extends \yii\base\Object implements \yii\web\IdentityInterface
     public $username;
     public $password;
     public $authKey;
-    public $accessToken;
+    public $accessToken;    
+    
 
     private static $users = [
-        '100' => [
+        /*'100' => [
             'id' => '100',
             'username' => 'admin',
             'password' => 'admin',
@@ -24,8 +25,24 @@ class User extends \yii\base\Object implements \yii\web\IdentityInterface
             'password' => 'demo',
             'authKey' => 'test101key',
             'accessToken' => '101-token',
-        ],
+        ],*/
     ];
+    
+    public function getUsers(){
+        
+        $i = 100; //????
+        $usersAll = [];
+        $users = UserM::find()->all();
+        foreach ($users as $user)
+        {
+            $usersAll[$i]['id'] = $i;//$user->id;
+            $usersAll[$i]['username'] = $user->login;
+            $usersAll[$i]['password'] = $user->password;            
+            $i++;
+        }
+        return $usersAll;
+        
+    }
 
 
     /**
@@ -33,7 +50,9 @@ class User extends \yii\base\Object implements \yii\web\IdentityInterface
      */
     public static function findIdentity($id)
     {
-        return isset(self::$users[$id]) ? new static(self::$users[$id]) : null;
+        $usersAll = self::getUsers();        
+        //return isset(self::$users[$id]) ? new static(self::$users[$id]) : null;
+        return isset($usersAll[$id]) ? new static($usersAll[$id]) : null;
     }
 
     /**
@@ -41,7 +60,8 @@ class User extends \yii\base\Object implements \yii\web\IdentityInterface
      */
     public static function findIdentityByAccessToken($token, $type = null)
     {
-        foreach (self::$users as $user) {
+        $usersAll = self::getUsers();    
+        foreach ($usersAll/*self::$users*/ as $user) {
             if ($user['accessToken'] === $token) {
                 return new static($user);
             }
@@ -57,8 +77,11 @@ class User extends \yii\base\Object implements \yii\web\IdentityInterface
      * @return static|null
      */
     public static function findByUsername($username)
-    {
-        foreach (self::$users as $user) {
+    {   
+        $usersAll = self::getUsers();
+         
+        foreach ($usersAll as $user) { //foreach (self::$users as $user) {
+           //print_r($username.$user['username']);die;
             if (strcasecmp($user['username'], $username) === 0) {
                 return new static($user);
             }
